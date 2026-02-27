@@ -5,6 +5,9 @@ public class PlayerController : MonoBehaviour
 {
     public float jumpForce = 10f;
     public float gravityMultiplier = 1f;
+
+    public bool isGameOver = false;
+
     private Rigidbody rb;
     private InputAction jumpAction;
 
@@ -12,6 +15,7 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
+        isGameOver = false;
         rb = GetComponent<Rigidbody>();
         jumpAction = InputSystem.actions.FindAction("Jump");
     }
@@ -25,7 +29,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (jumpAction.triggered && isOnGround == true)
+        if (jumpAction.triggered && isOnGround == true && !isGameOver)
         {
             rb.AddForce(jumpForce * Vector3.up, ForceMode.Impulse);
             isOnGround = false;
@@ -37,6 +41,10 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isOnGround = true;
+        } else if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            Debug.Log("Game Over");
+            isGameOver = true;
         }
     }
 }
